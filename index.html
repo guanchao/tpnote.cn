@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>拓扑笔记 — 让思维自然连接</title>
+  <meta name="description" content="拓扑笔记是一款支持双向链接、素材库与 AI 智能助手的跨平台桌面 Markdown 笔记软件。提供 AI 对话模式与 Agent 自动编辑模式，集成多家大模型，支持 AI 摘要、智能标签、内容润色、文生图，内置 RSS 订阅与网页剪藏，本地优先，数据属于你。">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://tpnote.cn/">
+  <meta property="og:title" content="拓扑笔记 — 让思维自然连接">
+  <meta property="og:description" content="拓扑笔记是一款支持双向链接、素材库与 AI 智能助手的跨平台桌面 Markdown 笔记软件。提供 AI 对话模式与 Agent 自动编辑模式，集成多家大模型，支持 AI 摘要、智能标签、内容润色、文生图，内置 RSS 订阅与网页剪藏，本地优先，数据属于你。">
+  <meta property="og:image" content="https://tpnote.cn/og-image.png">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://tpnote.cn/">
+  <meta name="twitter:title" content="拓扑笔记 — 让思维自然连接">
+  <meta name="twitter:description" content="拓扑笔记是一款支持双向链接、素材库与 AI 智能助手的跨平台桌面 Markdown 笔记软件。提供 AI 对话模式与 Agent 自动编辑模式，集成多家大模型，支持 AI 摘要、智能标签、内容润色、文生图，内置 RSS 订阅与网页剪藏，本地优先，数据属于你。">
+  <meta name="twitter:image" content="https://tpnote.cn/og-image.png">
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1024 1024'><rect x='40' y='40' width='944' height='944' rx='212' ry='212' fill='%23fff'/><g fill='%232680EB'><circle cx='512' cy='280' r='72'/><circle cx='310' cy='630' r='72'/><circle cx='714' cy='630' r='72'/><line x1='512' y1='280' x2='310' y2='630' stroke='%232680EB' stroke-width='36'/><line x1='512' y1='280' x2='714' y2='630' stroke='%232680EB' stroke-width='36'/><line x1='310' y1='630' x2='714' y2='630' stroke='%232680EB' stroke-width='36'/></g></svg>">
+  <style>
+    /* ===== Reset & Base ===== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      color: #1a1a2e;
+      background: #ffffff;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    /* ===== Utility ===== */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .section-title {
+      font-size: 2.25rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+    .section-subtitle {
+      text-align: center;
+      color: #6b7280;
+      font-size: 1.125rem;
+      margin-bottom: 64px;
+      max-width: 640px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ===== Navigation ===== */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      transition: box-shadow 0.3s;
+    }
+    nav.scrolled { box-shadow: 0 1px 12px rgba(0, 0, 0, 0.08); }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.125rem;
+    }
+    .nav-logo svg { width: 32px; height: 32px; }
+    .nav-links { display: flex; align-items: center; gap: 32px; }
+    .nav-links a {
+      font-size: 0.9rem;
+      color: #4b5563;
+      transition: color 0.2s;
+      font-weight: 500;
+    }
+    .nav-links a:hover { color: #2680EB; }
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      background: #2680EB;
+      color: #fff;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .nav-btn:hover { background: #1a6dd4; transform: translateY(-1px); }
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+    }
+    .mobile-menu-btn span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: #1a1a2e;
+      margin: 5px 0;
+      border-radius: 2px;
+      transition: 0.3s;
+    }
+
+    /* ===== Hero ===== */
+    .hero {
+      padding: 160px 0 100px;
+      text-align: center;
+      background: linear-gradient(180deg, #f0f7ff 0%, #ffffff 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(38, 128, 235, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-logo {
+      width: 88px;
+      height: 88px;
+      margin: 0 auto 32px;
+      background: #fff;
+      border-radius: 22px;
+      box-shadow: 0 8px 32px rgba(38, 128, 235, 0.15), 0 2px 8px rgba(0, 0, 0, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .hero-logo svg { width: 52px; height: 52px; }
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+    .hero h1 span { color: #2680EB; }
+    .hero-desc {
+      font-size: 1.25rem;
+      color: #6b7280;
+      max-width: 580px;
+      margin: 0 auto 40px;
+      line-height: 1.8;
+    }
+    .hero-actions { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      background: #2680EB;
+      color: #fff;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all 0.2s;
+      box-shadow: 0 4px 16px rgba(38, 128, 235, 0.3);
+    }
+    .btn-primary:hover { background: #1a6dd4; transform: translateY(-2px); box-shadow: 0 6px 24px rgba(38, 128, 235, 0.4); }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      background: #fff;
+      color: #1a1a2e;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover { border-color: #2680EB; color: #2680EB; transform: translateY(-2px); }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 16px;
+      background: rgba(38, 128, 235, 0.08);
+      color: #2680EB;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+    .hero-platforms {
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      color: #9ca3af;
+      font-size: 0.85rem;
+    }
+    .hero-platforms span { display: flex; align-items: center; gap: 6px; }
+
+    /* ===== Features Grid ===== */
+    .features {
+      padding: 120px 0;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .feature-card {
+      padding: 36px 32px;
+      border-radius: 16px;
+      background: #fafbfc;
+      border: 1px solid #f0f0f3;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+      border-color: rgba(38, 128, 235, 0.2);
+    }
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+    }
+    .feature-card h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .feature-card p {
+      color: #6b7280;
+      font-size: 0.925rem;
+      line-height: 1.7;
+    }
+    /* Card accent colors */
+    .fc-blue .feature-icon { background: rgba(38, 128, 235, 0.1); }
+    .fc-purple .feature-icon { background: rgba(139, 92, 246, 0.1); }
+    .fc-green .feature-icon { background: rgba(16, 185, 129, 0.1); }
+    .fc-orange .feature-icon { background: rgba(245, 158, 11, 0.1); }
+    .fc-cyan .feature-icon { background: rgba(6, 182, 212, 0.1); }
+    .fc-red .feature-icon { background: rgba(239, 68, 68, 0.1); }
+    .fc-indigo .feature-icon { background: rgba(99, 102, 241, 0.1); }
+    .fc-teal .feature-icon { background: rgba(20, 184, 166, 0.1); }
+    .fc-rose .feature-icon { background: rgba(244, 63, 94, 0.1); }
+
+    /* ===== Highlights (large feature blocks) ===== */
+    .highlights {
+      padding: 80px 0 120px;
+    }
+    .highlight-block {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      margin-bottom: 120px;
+    }
+    .highlight-block:last-child { margin-bottom: 0; }
+    .highlight-block.reverse { direction: rtl; }
+    .highlight-block.reverse > * { direction: ltr; }
+    .highlight-text .hl-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 16px;
+    }
+    .hl-tag-blue { background: rgba(38, 128, 235, 0.1); color: #2680EB; }
+    .hl-tag-purple { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+    .hl-tag-green { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+    .hl-tag-amber { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+    .highlight-text h3 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+    .highlight-text p {
+      color: #6b7280;
+      font-size: 1.05rem;
+      line-height: 1.8;
+      margin-bottom: 12px;
+    }
+    .highlight-text ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 16px;
+    }
+    .highlight-text ul li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 6px 0;
+      color: #4b5563;
+      font-size: 0.95rem;
+    }
+    .highlight-text ul li::before {
+      content: '✓';
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    .highlight-visual {
+      border-radius: 20px;
+      background: linear-gradient(135deg, #f0f7ff 0%, #f5f3ff 100%);
+      padding: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 360px;
+      position: relative;
+      overflow: hidden;
+    }
+    .highlight-visual::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      border: 1px solid rgba(0, 0, 0, 0.04);
+      pointer-events: none;
+    }
+
+    /* Mock Editor UI */
+    .mock-editor {
+      width: 100%;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      font-size: 0.85rem;
+    }
+    .mock-titlebar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: #f9fafb;
+      border-bottom: 1px solid #f0f0f3;
+    }
+    .mock-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .mock-dot-r { background: #ff5f57; }
+    .mock-dot-y { background: #febc2e; }
+    .mock-dot-g { background: #28c840; }
+    .mock-editor-body { padding: 20px 24px; }
+    .mock-editor-body h4 { font-size: 1rem; margin-bottom: 8px; color: #1a1a2e; }
+    .mock-editor-body p { color: #6b7280; font-size: 0.85rem; line-height: 1.7; margin-bottom: 6px; }
+    .mock-link {
+      color: #2680EB;
+      background: rgba(38, 128, 235, 0.08);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+    .mock-tag {
+      color: #8b5cf6;
+      font-weight: 500;
+    }
+
+    /* Mock Graph */
+    .mock-graph {
+      width: 100%;
+      height: 260px;
+    }
+    .mock-graph circle { transition: r 0.3s; }
+    .mock-graph circle:hover { r: 12; }
+
+    /* ===== Comparison Table ===== */
+    .comparison {
+      padding: 120px 0;
+      background: #fafbfc;
+    }
+    .comparison-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    }
+    .comparison-table th,
+    .comparison-table td {
+      padding: 16px 24px;
+      text-align: center;
+      font-size: 0.9rem;
+      border-bottom: 1px solid #f0f0f3;
+    }
+    .comparison-table th {
+      background: #f9fafb;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: #4b5563;
+    }
+    .comparison-table th:nth-child(2) {
+      background: rgba(38, 128, 235, 0.06);
+      color: #2680EB;
+    }
+    .comparison-table td:nth-child(2) {
+      background: rgba(38, 128, 235, 0.02);
+      font-weight: 600;
+    }
+    .comparison-table td:first-child {
+      text-align: left;
+      font-weight: 600;
+      color: #1a1a2e;
+    }
+    .comparison-table tr:last-child td { border-bottom: none; }
+    .check { color: #10b981; font-weight: 700; }
+    .cross { color: #ef4444; }
+    .partial { color: #f59e0b; }
+
+    /* ===== About & Contact ===== */
+    .about-section {
+      padding: 100px 0;
+      background: #fafbfc;
+    }
+    .about-card {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 20px;
+      padding: 56px 48px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04), 0 1px 4px rgba(0, 0, 0, 0.02);
+      border: 1px solid rgba(0, 0, 0, 0.04);
+    }
+    .about-card .about-icon {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #eff6ff, #e0edff);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+    .about-card h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #1a1a2e;
+    }
+    .about-card p {
+      color: #4b5563;
+      font-size: 1.05rem;
+      line-height: 1.9;
+    }
+
+    .contact-section {
+      padding: 100px 0;
+      background: #ffffff;
+    }
+    .contact-card {
+      max-width: 800px;
+      margin: 0 auto;
+      background: linear-gradient(135deg, #f0f7ff 0%, #f8f6ff 100%);
+      border-radius: 20px;
+      padding: 56px 48px;
+      text-align: center;
+      border: 1px solid rgba(38, 128, 235, 0.08);
+    }
+    .contact-card .contact-icon {
+      width: 64px;
+      height: 64px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      box-shadow: 0 4px 16px rgba(38, 128, 235, 0.12);
+    }
+    .contact-card h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #1a1a2e;
+    }
+    .contact-card p {
+      color: #6b7280;
+      font-size: 1rem;
+      margin-bottom: 24px;
+    }
+    .contact-email {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 32px;
+      background: #fff;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #2680EB;
+      box-shadow: 0 2px 12px rgba(38, 128, 235, 0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: 1px solid rgba(38, 128, 235, 0.12);
+    }
+    .contact-email:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(38, 128, 235, 0.18);
+    }
+
+    /* ===== CTA ===== */
+    .cta {
+      padding: 120px 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #f0f7ff 0%, #f5f3ff 50%, #fef3f2 100%);
+      z-index: -1;
+    }
+    .cta h2 {
+      font-size: 2.75rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 16px;
+    }
+    .cta p {
+      color: #6b7280;
+      font-size: 1.125rem;
+      margin-bottom: 40px;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .cta .btn-primary { font-size: 1.05rem; padding: 16px 40px; }
+
+    /* ===== Footer ===== */
+    footer {
+      padding: 60px 0 40px;
+      border-top: 1px solid #f0f0f3;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+    .footer-logo svg { width: 28px; height: 28px; }
+    .footer-links { display: flex; gap: 24px; }
+    .footer-links a { color: #9ca3af; font-size: 0.875rem; transition: color 0.2s; }
+    .footer-links a:hover { color: #2680EB; }
+    .footer-copy { color: #d1d5db; font-size: 0.8rem; }
+    .footer-bottom {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid #f5f5f5;
+      color: #d1d5db;
+      font-size: 0.8rem;
+    }
+    .footer-bottom span { color: #2680EB; }
+
+    /* ===== Animations ===== */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .stagger-1 { transition-delay: 0.1s; }
+    .stagger-2 { transition-delay: 0.2s; }
+    .stagger-3 { transition-delay: 0.3s; }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 1024px) {
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .highlight-block { grid-template-columns: 1fr; gap: 40px; }
+      .highlight-block.reverse { direction: ltr; }
+    }
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.25rem; }
+      .hero-desc { font-size: 1.05rem; }
+      .hero { padding: 130px 0 80px; }
+      .section-title { font-size: 1.75rem; }
+      .features-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+      .mobile-menu-btn { display: block; }
+      .comparison-table { font-size: 0.8rem; }
+      .comparison-table th,
+      .comparison-table td { padding: 10px 12px; }
+      .footer-inner { flex-direction: column; gap: 24px; text-align: center; }
+      .cta h2 { font-size: 2rem; }
+      .highlight-text h3 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== Navigation ===== -->
+  <nav id="nav">
+    <div class="container nav-inner">
+      <a href="#" class="nav-logo">
+        <svg viewBox="0 0 1024 1024" fill="none">
+          <g fill="#2680EB"><circle cx="512" cy="280" r="72"/><circle cx="310" cy="630" r="72"/><circle cx="714" cy="630" r="72"/>
+          <line x1="512" y1="280" x2="310" y2="630" stroke="#2680EB" stroke-width="36" stroke-linecap="round"/>
+          <line x1="512" y1="280" x2="714" y2="630" stroke="#2680EB" stroke-width="36" stroke-linecap="round"/>
+          <line x1="310" y1="630" x2="714" y2="630" stroke="#2680EB" stroke-width="36" stroke-linecap="round"/></g>
+        </svg>
+        拓扑笔记
+      </a>
+      <div class="nav-links">
+        <a href="#features">功能</a>
+        <a href="#highlights">亮点</a>
+        <a href="#comparison">对比</a>
+        <a href="#about">关于</a>
+        <a href="#contact">联系</a>
+      </div>
+      <button class="mobile-menu-btn" onclick="document.querySelector('.nav-links').classList.toggle('show')" aria-label="菜单">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ===== Hero ===== -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-badge">🚀 v0.5.0 正式发布</div>
+      <div class="hero-logo">
+        <svg viewBox="0 0 1024 1024" fill="none">
+          <g fill="#2680EB"><circle cx="512" cy="280" r="72"/><circle cx="310" cy="630" r="72"/><circle cx="714" cy="630" r="72"/>
+          <line x1="512" y1="280" x2="310" y2="630" stroke="#2680EB" stroke-width="36" stroke-linecap="round"/>
+          <line x1="512" y1="280" x2="714" y2="630" stroke="#2680EB" stroke-width="36" stroke-linecap="round"/>
+          <line x1="310" y1="630" x2="714" y2="630" stroke="#2680EB" stroke-width="36" stroke-linecap="round"/></g>
+        </svg>
+      </div>
+      <h1>让思维<span>自然连接</span></h1>
+      <p class="hero-desc">一款支持双向链接、素材库与 AI 智能加持的跨平台桌面笔记软件<br>本地优先、离线可用，你的笔记完全属于你自己</p>
+      <div class="hero-actions">
+        <a href="#download" class="btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          免费下载
+        </a>
+      </div>
+      <div class="hero-platforms">
+        <span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83"/>
+          <path d="M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11"/></svg>
+          macOS
+        </span>
+        <span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
+          Windows
+        </span>
+        <span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12.504 0c-.155 0-.315.008-.48.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.832-.41 1.684-.287 2.489a.424.424 0 00-.11.135c-.26.268-.45.6-.663.839-.199.199-.485.267-.797.4-.313.136-.658.269-.864.68-.09.189-.136.394-.132.602 0 .199.027.4.055.536.058.399.116.728.04.97-.249.68-.28 1.145-.106 1.484.174.334.535.47.94.601.81.2 1.91.135 2.774.6.926.466 1.866.67 2.616.47.526-.116.97-.464 1.208-.946.587-.003 1.23-.269 2.26-.334.699-.058 1.574.267 2.577.2.025.134.063.198.114.333l.003.003c.391.778 1.113 1.368 1.884 1.43.868.065 1.157-.49 1.291-1.021.14-.534.239-.621.44-.621.233 0 .347.093.467.6.116.467.326 1.083 1.192 1.025.866-.06 1.578-.64 1.965-1.412.018-.044.025-.09.037-.135.091-.21.145-.46.145-.716v-.002a3.926 3.926 0 00-.241-1.29c-.194-.54-.399-1.165-.288-1.662.1-.418.363-.725.676-.975.313-.25.665-.464.97-.757.65-.622.975-1.564.478-2.708-.15-.36-.366-.672-.607-.939-.24-.267-.395-.524-.44-.837-.027-.16-.04-.332-.024-.513.016-.181.049-.363.085-.549.072-.376.146-.748.1-1.143-.046-.36-.174-.68-.398-.963a2.155 2.155 0 00-.636-.54c.018-.098.023-.196.023-.298 0-.236-.06-.446-.147-.645-.09-.2-.202-.405-.351-.546-.147-.141-.339-.229-.539-.268a.955.955 0 00-.64.118c-.194.12-.376.312-.529.521-.153.209-.307.447-.433.664-.035.06-.067.121-.096.181a6.992 6.992 0 00-2.152-1.473c-1.834-.812-3.556-.453-4.818.496-.21-.084-.42-.158-.628-.221-.2-.061-.386-.109-.553-.14z"/></svg>
+          Linux
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Features ===== -->
+  <section class="features" id="features">
+    <div class="container">
+      <h2 class="section-title fade-up">强大且克制的功能</h2>
+      <p class="section-subtitle fade-up">每一个功能都服务于同一个目标——让你更流畅地记录和思考</p>
+      <div class="features-grid">
+
+        <!-- 第一行 -->
+        <div class="feature-card fc-blue fade-up">
+          <div class="feature-icon">🔗</div>
+          <h3>双向链接</h3>
+          <p>输入 <code>[[</code> 即刻弹出联想列表，建立笔记间的双向引用关系。反向链接面板自动聚合所有引用来源。</p>
+        </div>
+
+        <div class="feature-card fc-purple fade-up stagger-1">
+          <div class="feature-icon">📝</div>
+          <h3>所见即所得编辑</h3>
+          <p>基于 TipTap 的富文本编辑器，告别分屏预览。支持标题、列表、代码块、表格、公式等完整 Markdown 语法。</p>
+        </div>
+
+        <div class="feature-card fc-green fade-up stagger-2">
+          <div class="feature-icon">🗺️</div>
+          <h3>知识图谱</h3>
+          <p>基于 D3.js 力导向图的交互式知识网络可视化，以节点和连线直观展现笔记间的关联关系。</p>
+        </div>
+
+        <!-- 第二行 -->
+        <div class="feature-card fc-orange fade-up">
+          <div class="feature-icon">🎨</div>
+          <h3>自由白板</h3>
+          <p>独立画布式思维工具，支持文本、图片、连线等多种节点，自动布局算法一键整理。</p>
+        </div>
+
+        <div class="feature-card fc-cyan fade-up stagger-1">
+          <div class="feature-icon">📐</div>
+          <h3>数学公式</h3>
+          <p>基于 KaTeX 的数学公式渲染，支持行内公式和块级公式，双击即可编辑。</p>
+        </div>
+
+        <div class="feature-card fc-red fade-up stagger-2">
+          <div class="feature-icon">📊</div>
+          <h3>Mermaid 图表</h3>
+          <p>在代码块中使用 mermaid 标记，即可渲染流程图、时序图、甘特图等多种图表。</p>
+        </div>
+
+        <!-- 第三行 -->
+        <div class="feature-card fc-indigo fade-up">
+          <div class="feature-icon">📤</div>
+          <h3>多格式导出</h3>
+          <p>支持将笔记导出为 PDF、HTML、DOCX 三种格式，完整保留排版和样式。</p>
+        </div>
+
+        <div class="feature-card fc-teal fade-up stagger-1">
+          <div class="feature-icon">🏷️</div>
+          <h3>标签系统</h3>
+          <p>使用 <code>#标签名</code> 语法即刻创建标签，标签面板自动聚合关联笔记，多维度组织知识。</p>
+        </div>
+
+        <div class="feature-card fc-rose fade-up stagger-2">
+          <div class="feature-icon">📸</div>
+          <h3>快照/版本历史</h3>
+          <p>手动创建笔记快照，随时预览和恢复历史版本。完全由用户主动触发，不自动产生，安心掌控每一次存档。</p>
+        </div>
+
+        <!-- 第四行：AI 核心能力 -->
+        <div class="feature-card fc-indigo fade-up">
+          <div class="feature-icon">💬</div>
+          <h3>AI 对话模式</h3>
+          <p>在编辑器侧边栏打开 AI 对话面板，基于当前文章上下文与 AI 自由交流。提问、讨论、获取灵感，AI 理解你的笔记内容。</p>
+        </div>
+
+        <div class="feature-card fc-purple fade-up stagger-1">
+          <div class="feature-icon">🤖</div>
+          <h3>AI Agent 模式</h3>
+          <p>AI 自主阅读、编辑你的笔记——自动读取文章、插入内容、替换文本、生成配图。一句指令，Agent 自动完成多步操作。</p>
+        </div>
+
+        <div class="feature-card fc-orange fade-up stagger-2">
+          <div class="feature-icon">🖼️</div>
+          <h3>AI 文生图</h3>
+          <p>基于大模型的文本生成图片能力，选中文字描述或通过 Agent 指令即可生成配图，图片自动插入光标位置。</p>
+        </div>
+
+        <!-- 第五行 -->
+        <div class="feature-card fc-green fade-up">
+          <div class="feature-icon">✨</div>
+          <h3>AI 摘要 & 润色</h3>
+          <p>集成多家大模型（DeepSeek、智谱、通义千问等），选中文本一键生成摘要、智能推荐标签、内容润色，让 AI 为你的笔记提效。</p>
+        </div>
+
+        <div class="feature-card fc-cyan fade-up stagger-1">
+          <div class="feature-icon">📃</div>
+          <h3>块引用</h3>
+          <p>支持多级嵌套块引用，快捷键或工具栏一键操作。适合引用原文、标注重点、记录灵感，让笔记层次分明。</p>
+        </div>
+
+        <!-- 第五行 -->
+        <div class="feature-card fc-orange fade-up">
+          <div class="feature-icon">📡</div>
+          <h3>RSS 订阅</h3>
+          <p>内置 RSS/Atom 订阅管理器，添加订阅源后自动拉取新文章。支持定时刷新、批量管理，让优质信息主动流入你的知识库。</p>
+        </div>
+
+        <div class="feature-card fc-teal fade-up stagger-1">
+          <div class="feature-icon">📎</div>
+          <h3>网页剪藏</h3>
+          <p>输入任意网页 URL，一键抓取标题和正文内容，智能编码检测、正文提取。剪藏的素材可添加标签，随时转为笔记。</p>
+        </div>
+
+        <div class="feature-card fc-rose fade-up stagger-2">
+          <div class="feature-icon">🤖</div>
+          <h3>机器人推送通知</h3>
+          <p>RSS 新文章自动推送到企业微信、钉钉、飞书、Telegram 群聊机器人。多机器人并行推送，重要信息不遗漏。</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Highlights ===== -->
+  <section class="highlights" id="highlights">
+    <div class="container">
+      <h2 class="section-title fade-up">为什么选择拓扑笔记</h2>
+      <p class="section-subtitle fade-up">知识不是档案柜，而是一张网——有了 AI 和素材库，这张网更加智能</p>
+
+      <!-- Highlight 1: Wikilink -->
+      <div class="highlight-block fade-up">
+        <div class="highlight-text">
+          <div class="hl-tag hl-tag-blue">核心功能</div>
+          <h3>双向链接，让知识自然连接</h3>
+          <p>在任意位置输入 <code>[[</code>，立即弹出笔记联想列表。选中即建立双向链接——从当前笔记跳转过去，从那篇笔记也能看到谁引用了它。</p>
+          <ul>
+            <li>正向链接：点击即跳转目标笔记</li>
+            <li>反向链接面板自动聚合引用来源及上下文</li>
+            <li>链接到不存在的笔记时自动新建，思路不中断</li>
+            <li>支持别名语法 <code>[[标题|显示文本]]</code></li>
+          </ul>
+        </div>
+        <div class="highlight-visual">
+          <div class="mock-editor">
+            <div class="mock-titlebar">
+              <div class="mock-dot mock-dot-r"></div>
+              <div class="mock-dot mock-dot-y"></div>
+              <div class="mock-dot mock-dot-g"></div>
+            </div>
+            <div class="mock-editor-body">
+              <h4>📖 读书笔记：认知觉醒</h4>
+              <p>这本书的核心观点与 <span class="mock-link">[[元认知]]</span> 概念高度相关。</p>
+              <p>作者提到的"拉伸区"练习，可以参考 <span class="mock-link">[[刻意练习]]</span> 中的方法论。</p>
+              <p style="margin-top:12px;padding-top:10px;border-top:1px dashed #e5e7eb;color:#9ca3af;font-size:0.8rem;">↩ 反向链接 (2)</p>
+              <p style="font-size:0.8rem;color:#6b7280;"><span class="mock-link">[[学习方法论]]</span> — "…结合认知觉醒中的理论…"</p>
+              <p style="font-size:0.8rem;color:#6b7280;"><span class="mock-link">[[2024年度总结]]</span> — "…读了认知觉醒这本书后…"</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Highlight 2: Local First -->
+      <div class="highlight-block reverse fade-up">
+        <div class="highlight-text">
+          <div class="hl-tag hl-tag-green">设计理念</div>
+          <h3>本地优先，数据完全属于你</h3>
+          <p>笔记以 <code>.md</code> 纯文本文件存储在你自己的电脑上。没有账号、没有云端、没有同步冲突。你可以用 Git 管理版本，用任何文本编辑器打开它们。</p>
+          <ul>
+            <li>纯 .md 文件存储，永不被锁定</li>
+            <li>不向任何服务器发送数据</li>
+            <li>完全离线可用，无需网络</li>
+            <li>SQLite 索引可随时从源文件重建</li>
+          </ul>
+        </div>
+        <div class="highlight-visual" style="background: linear-gradient(135deg, #ecfdf5 0%, #f0f7ff 100%);">
+          <div style="text-align:center;">
+            <div style="font-size:4rem;margin-bottom:20px;">🔒</div>
+            <div style="font-size:1.25rem;font-weight:700;color:#1a1a2e;margin-bottom:8px;">你的数据，你做主</div>
+            <div style="color:#6b7280;font-size:0.9rem;line-height:1.7;">
+              纯文本 · 零云端 · 完全离线<br>
+              隐私由你掌控
+            </div>
+            <div style="display:flex;gap:12px;justify-content:center;margin-top:24px;">
+              <div style="padding:8px 16px;background:#fff;border-radius:8px;font-size:0.8rem;color:#4b5563;box-shadow:0 2px 8px rgba(0,0,0,0.05);">📄 .md</div>
+              <div style="padding:8px 16px;background:#fff;border-radius:8px;font-size:0.8rem;color:#4b5563;box-shadow:0 2px 8px rgba(0,0,0,0.05);">🎨 .board</div>
+              <div style="padding:8px 16px;background:#fff;border-radius:8px;font-size:0.8rem;color:#4b5563;box-shadow:0 2px 8px rgba(0,0,0,0.05);">🗄️ .db</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Highlight 3: Knowledge Graph -->
+      <div class="highlight-block fade-up">
+        <div class="highlight-text">
+          <div class="hl-tag hl-tag-purple">可视化</div>
+          <h3>知识图谱，俯瞰你的知识网络</h3>
+          <p>基于 D3.js 力导向图的交互式知识图谱，每一篇笔记都是一个节点，每一条链接都是一根连线。缩放、拖拽、点击跳转，让你以全新的视角审视自己的知识体系。</p>
+          <ul>
+            <li>节点大小反映链接数量</li>
+            <li>支持缩放和拖拽交互</li>
+            <li>点击节点即刻跳转到对应笔记</li>
+            <li>实时更新，随笔记网络动态生长</li>
+          </ul>
+        </div>
+        <div class="highlight-visual" style="background: linear-gradient(135deg, #f5f3ff 0%, #f0f7ff 100%);">
+          <svg class="mock-graph" viewBox="0 0 400 260">
+            <!-- Edges -->
+            <line x1="200" y1="80" x2="100" y2="170" stroke="#c4b5fd" stroke-width="2" opacity="0.6"/>
+            <line x1="200" y1="80" x2="300" y2="150" stroke="#c4b5fd" stroke-width="2" opacity="0.6"/>
+            <line x1="200" y1="80" x2="160" y2="40" stroke="#c4b5fd" stroke-width="2" opacity="0.6"/>
+            <line x1="200" y1="80" x2="280" y2="50" stroke="#c4b5fd" stroke-width="2" opacity="0.6"/>
+            <line x1="100" y1="170" x2="60" y2="220" stroke="#c4b5fd" stroke-width="1.5" opacity="0.4"/>
+            <line x1="100" y1="170" x2="150" y2="230" stroke="#c4b5fd" stroke-width="1.5" opacity="0.4"/>
+            <line x1="300" y1="150" x2="350" y2="200" stroke="#c4b5fd" stroke-width="1.5" opacity="0.4"/>
+            <line x1="300" y1="150" x2="260" y2="210" stroke="#c4b5fd" stroke-width="1.5" opacity="0.4"/>
+            <line x1="100" y1="170" x2="300" y2="150" stroke="#c4b5fd" stroke-width="1.5" opacity="0.3"/>
+            <line x1="160" y1="40" x2="280" y2="50" stroke="#c4b5fd" stroke-width="1.5" opacity="0.3"/>
+            <!-- Nodes -->
+            <circle cx="200" cy="80" r="10" fill="#2680EB"/>
+            <circle cx="100" cy="170" r="8" fill="#8b5cf6"/>
+            <circle cx="300" cy="150" r="8" fill="#8b5cf6"/>
+            <circle cx="160" cy="40" r="6" fill="#a78bfa"/>
+            <circle cx="280" cy="50" r="6" fill="#a78bfa"/>
+            <circle cx="60" cy="220" r="5" fill="#c4b5fd"/>
+            <circle cx="150" cy="230" r="5" fill="#c4b5fd"/>
+            <circle cx="350" cy="200" r="5" fill="#c4b5fd"/>
+            <circle cx="260" cy="210" r="5" fill="#c4b5fd"/>
+            <!-- Labels -->
+            <text x="200" y="68" text-anchor="middle" fill="#1a1a2e" font-size="10" font-weight="600">认知觉醒</text>
+            <text x="100" y="160" text-anchor="middle" fill="#4b5563" font-size="9">元认知</text>
+            <text x="300" y="140" text-anchor="middle" fill="#4b5563" font-size="9">刻意练习</text>
+            <text x="160" y="32" text-anchor="middle" fill="#6b7280" font-size="8">学习方法</text>
+            <text x="280" y="42" text-anchor="middle" fill="#6b7280" font-size="8">读书笔记</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Highlight 4: Snapshot -->
+      <div class="highlight-block reverse fade-up">
+        <div class="highlight-text">
+          <div class="hl-tag hl-tag-amber">版本管理</div>
+          <h3>快照历史，让每次修改都有后悔药</h3>
+          <p>在任何时刻点击工具栏的快照按钮，即可保存当前笔记的完整内容快照。所有快照按时间倒序排列，支持预览和一键恢复，让你安心大胆地修改。</p>
+          <ul>
+            <li>完全由用户主动触发，不自动产生</li>
+            <li>快照面板支持预览历史版本内容</li>
+            <li>一键恢复到任意历史快照</li>
+            <li>笔记删除时自动清理关联快照</li>
+          </ul>
+        </div>
+        <div class="highlight-visual" style="background: linear-gradient(135deg, #fffbeb 0%, #f0f7ff 100%);">
+          <div class="mock-editor">
+            <div class="mock-titlebar">
+              <div class="mock-dot mock-dot-r"></div>
+              <div class="mock-dot mock-dot-y"></div>
+              <div class="mock-dot mock-dot-g"></div>
+            </div>
+            <div class="mock-editor-body">
+              <h4>📸 快照历史</h4>
+              <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
+                <div style="padding:10px 12px;background:#f0f7ff;border-radius:8px;border:1px solid rgba(38,128,235,0.15);">
+                  <div style="display:flex;align-items:center;justify-content:space-between;">
+                    <span style="font-size:0.8rem;color:#6b7280;font-weight:500;">今天 14:32</span>
+                    <span style="font-size:0.7rem;color:#2680EB;font-weight:600;background:rgba(38,128,235,0.08);padding:2px 8px;border-radius:4px;">预览中</span>
+                  </div>
+                </div>
+                <div style="padding:10px 12px;background:#fafbfc;border-radius:8px;border:1px solid #f0f0f3;">
+                  <div style="display:flex;align-items:center;justify-content:space-between;">
+                    <span style="font-size:0.8rem;color:#6b7280;font-weight:500;">今天 10:15</span>
+                    <div style="display:flex;gap:4px;">
+                      <span style="font-size:0.7rem;color:#6b7280;padding:2px 8px;border:1px solid #e5e7eb;border-radius:4px;">预览</span>
+                      <span style="font-size:0.7rem;color:#2680EB;padding:2px 8px;border:1px solid rgba(38,128,235,0.3);border-radius:4px;">恢复</span>
+                    </div>
+                  </div>
+                </div>
+                <div style="padding:10px 12px;background:#fafbfc;border-radius:8px;border:1px solid #f0f0f3;">
+                  <div style="display:flex;align-items:center;justify-content:space-between;">
+                    <span style="font-size:0.8rem;color:#6b7280;font-weight:500;">昨天 21:08</span>
+                    <div style="display:flex;gap:4px;">
+                      <span style="font-size:0.7rem;color:#6b7280;padding:2px 8px;border:1px solid #e5e7eb;border-radius:4px;">预览</span>
+                      <span style="font-size:0.7rem;color:#2680EB;padding:2px 8px;border:1px solid rgba(38,128,235,0.3);border-radius:4px;">恢复</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Highlight 5: AI Chat & Agent -->
+      <div class="highlight-block fade-up">
+        <div class="highlight-text">
+          <div class="hl-tag" style="background:rgba(99,102,241,0.1);color:#6366f1;">AI 能力</div>
+          <h3>AI 双模式，让笔记更聪明</h3>
+          <p>集成 DeepSeek、智谱 GLM、通义千问、月之暗面等多家主流大模型，提供两种 AI 交互模式——<strong>对话模式</strong>和 <strong>Agent 模式</strong>，从灵感问答到自动化编辑，全方位提升笔记效率。</p>
+          <ul>
+            <li><strong>对话模式</strong>：侧边栏 AI 面板，基于文章上下文自由问答、讨论和获取灵感</li>
+            <li><strong>Agent 模式</strong>：AI 自主阅读、编辑笔记，自动执行读取、插入、替换、生成图片等多步操作</li>
+            <li>一键生成摘要，快速把握核心内容</li>
+            <li>智能推荐标签，自动归类知识</li>
+            <li>内容润色，AI 帮你优化文字表达</li>
+            <li>AI 文生图，自动插入到光标位置</li>
+            <li>多厂商切换，灵活选择最适合的模型</li>
+          </ul>
+        </div>
+        <div class="highlight-visual" style="background: linear-gradient(135deg, #eef2ff 0%, #f0f7ff 100%);">
+          <div class="mock-editor">
+            <div class="mock-titlebar">
+              <div class="mock-dot mock-dot-r"></div>
+              <div class="mock-dot mock-dot-y"></div>
+              <div class="mock-dot mock-dot-g"></div>
+            </div>
+            <div class="mock-editor-body">
+              <h4>🤖 AI 智能助手</h4>
+              <!-- 模式切换标签 -->
+              <div style="display:flex;gap:2px;margin-bottom:12px;background:#f0f0f3;border-radius:8px;padding:3px;">
+                <div style="flex:1;text-align:center;padding:6px 0;background:#fff;border-radius:6px;font-size:0.78rem;font-weight:600;color:#6366f1;box-shadow:0 1px 3px rgba(0,0,0,0.06);">💬 对话模式</div>
+                <div style="flex:1;text-align:center;padding:6px 0;font-size:0.78rem;font-weight:500;color:#9ca3af;border-radius:6px;">🤖 Agent 模式</div>
+              </div>
+              <!-- 对话内容 -->
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div style="align-self:flex-end;max-width:80%;padding:8px 12px;background:rgba(38,128,235,0.08);border-radius:12px 12px 2px 12px;font-size:0.8rem;color:#1a1a2e;">帮我总结一下这篇文章的核心观点</div>
+                <div style="align-self:flex-start;max-width:85%;padding:10px 12px;background:linear-gradient(135deg,#f5f3ff,#eef2ff);border-radius:12px 12px 12px 2px;font-size:0.8rem;color:#4b5563;line-height:1.6;border:1px solid rgba(99,102,241,0.1);">
+                  <div style="font-size:0.7rem;color:#6366f1;font-weight:600;margin-bottom:4px;">✨ AI 回复</div>
+                  本文核心论点：注意力是有限资源，需科学分配以最大化学习效率。关键建议包括…
+                </div>
+              </div>
+              <!-- Agent 操作展示 -->
+              <div style="margin-top:12px;padding:10px;background:linear-gradient(135deg,#f0fdf4,#ecfdf5);border-radius:8px;border-left:3px solid #10b981;">
+                <div style="font-size:0.72rem;color:#10b981;font-weight:600;margin-bottom:4px;">🤖 Agent 自动操作</div>
+                <div style="font-size:0.78rem;color:#4b5563;line-height:1.6;">
+                  <div style="display:flex;align-items:center;gap:4px;margin-bottom:2px;"><span style="color:#10b981;">✓</span> 读取文章内容</div>
+                  <div style="display:flex;align-items:center;gap:4px;margin-bottom:2px;"><span style="color:#10b981;">✓</span> 在第 12 行插入新段落</div>
+                  <div style="display:flex;align-items:center;gap:4px;"><span style="color:#10b981;">✓</span> 生成配图并插入光标位置</div>
+                </div>
+              </div>
+              <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;">
+                <span style="padding:2px 10px;background:rgba(139,92,246,0.08);color:#8b5cf6;border-radius:100px;font-size:0.75rem;font-weight:500;">#认知科学</span>
+                <span style="padding:2px 10px;background:rgba(38,128,235,0.08);color:#2680EB;border-radius:100px;font-size:0.75rem;font-weight:500;">#注意力管理</span>
+                <span style="padding:2px 10px;background:rgba(16,185,129,0.08);color:#10b981;border-radius:100px;font-size:0.75rem;font-weight:500;">#学习方法</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Highlight 6: Material Library -->
+      <div class="highlight-block reverse fade-up">
+        <div class="highlight-text">
+          <div class="hl-tag" style="background:rgba(245,158,11,0.1);color:#f59e0b;">素材中枢</div>
+          <h3>素材库，让知识输入更高效</h3>
+          <p>内置 RSS 订阅管理器、关键字搜索引擎和网页剪藏工具，让优质信息主动流入你的知识库。一键将素材转化为 Markdown 笔记，从采集到归档的完整闭环，再也不用在多个工具间来回切换。</p>
+          <ul>
+            <li>RSS/Atom 订阅自动拉取，支持定时刷新</li>
+            <li>关键字搜索聚合 Google、Bing、百度三大引擎</li>
+            <li>网页剪藏一键抓取正文，智能编码检测</li>
+            <li>素材 → 笔记一键转化，自动索引到知识库</li>
+            <li>机器人推送新文章到企业微信、钉钉、飞书</li>
+          </ul>
+        </div>
+        <div class="highlight-visual" style="background: linear-gradient(135deg, #fffbeb 0%, #fef3f2 100%);">
+          <div class="mock-editor">
+            <div class="mock-titlebar">
+              <div class="mock-dot mock-dot-r"></div>
+              <div class="mock-dot mock-dot-y"></div>
+              <div class="mock-dot mock-dot-g"></div>
+            </div>
+            <div class="mock-editor-body">
+              <h4>📡 素材库</h4>
+              <div style="display:flex;gap:8px;margin-bottom:12px;">
+                <span style="padding:3px 10px;background:rgba(38,128,235,0.08);color:#2680EB;border-radius:100px;font-size:0.75rem;font-weight:600;">全部 28</span>
+                <span style="padding:3px 10px;background:rgba(245,158,11,0.08);color:#f59e0b;border-radius:100px;font-size:0.75rem;font-weight:500;">未读 5</span>
+                <span style="padding:3px 10px;color:#6b7280;font-size:0.75rem;">收藏 3</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div style="padding:10px 12px;background:#f0f7ff;border-radius:8px;border-left:3px solid #2680EB;">
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <span style="width:6px;height:6px;background:#2680EB;border-radius:50%;flex-shrink:0;"></span>
+                    <span style="font-size:0.82rem;font-weight:600;color:#1a1a2e;">深入理解 React Server Components</span>
+                  </div>
+                  <div style="font-size:0.72rem;color:#6b7280;margin-top:4px;">React 官方博客 · 3 分钟前</div>
+                </div>
+                <div style="padding:10px 12px;background:#fafbfc;border-radius:8px;border:1px solid #f0f0f3;">
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <span style="width:6px;height:6px;background:#2680EB;border-radius:50%;flex-shrink:0;"></span>
+                    <span style="font-size:0.82rem;font-weight:500;color:#1a1a2e;">2026 年值得关注的 AI 趋势</span>
+                  </div>
+                  <div style="font-size:0.72rem;color:#6b7280;margin-top:4px;">少数派 · 15 分钟前</div>
+                </div>
+                <div style="padding:10px 12px;background:#fafbfc;border-radius:8px;border:1px solid #f0f0f3;">
+                  <div style="display:flex;align-items:center;gap:6px;justify-content:space-between;">
+                    <span style="font-size:0.82rem;color:#4b5563;">Rust 异步编程实战指南</span>
+                    <span style="font-size:0.65rem;color:#10b981;background:rgba(16,185,129,0.08);padding:1px 6px;border-radius:4px;">已转笔记</span>
+                  </div>
+                  <div style="font-size:0.72rem;color:#6b7280;margin-top:4px;">InfoQ · 1 小时前</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+  <section class="comparison" id="comparison">
+    <div class="container">
+      <h2 class="section-title fade-up">与同类产品对比</h2>
+      <p class="section-subtitle fade-up">拓扑笔记 — 兼具强大功能与开放透明</p>
+      <div class="fade-up" style="overflow-x:auto;">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>拓扑笔记</th>
+              <th>Typora</th>
+              <th>Obsidian</th>
+              <th>Notion</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>双向链接</td>
+              <td class="check">✓</td>
+              <td class="cross">✗</td>
+              <td class="check">✓</td>
+              <td class="check">✓</td>
+            </tr>
+            <tr>
+              <td>所见即所得</td>
+              <td class="check">✓</td>
+              <td class="check">✓</td>
+              <td class="partial">需切换</td>
+              <td class="check">✓</td>
+            </tr>
+            <tr>
+              <td>完全离线</td>
+              <td class="check">✓</td>
+              <td class="check">✓</td>
+              <td class="check">✓</td>
+              <td class="cross">✗</td>
+            </tr>
+            <tr>
+              <td>数据格式</td>
+              <td class="check">纯 .md</td>
+              <td>纯 .md</td>
+              <td>纯 .md</td>
+              <td class="cross">私有格式</td>
+            </tr>
+            <tr>
+              <td>免费开源</td>
+              <td class="check">✓</td>
+              <td class="cross">付费</td>
+              <td class="partial">部分免费</td>
+              <td class="partial">部分免费</td>
+            </tr>
+            <tr>
+              <td>知识图谱</td>
+              <td class="check">✓</td>
+              <td class="cross">✗</td>
+              <td class="check">✓</td>
+              <td class="cross">✗</td>
+            </tr>
+            <tr>
+              <td>白板</td>
+              <td class="check">✓</td>
+              <td class="cross">✗</td>
+              <td class="check">✓</td>
+              <td class="cross">✗</td>
+            </tr>
+            <tr>
+              <td>快照/版本历史</td>
+              <td class="check">✓</td>
+              <td class="cross">✗</td>
+              <td class="cross">✗</td>
+              <td class="check">✓</td>
+            </tr>
+            <tr>
+              <td>跨平台</td>
+              <td class="check">✓</td>
+              <td class="check">✓</td>
+              <td class="check">✓</td>
+              <td class="check">✓</td>
+            </tr>
+            <tr>
+              <td>AI 对话模式</td>
+              <td class="check">✓</td>
+              <td class="cross">✗</td>
+              <td class="cross">✗</td>
+              <td class="check">✓</td>
+            </tr>
+            <tr>
+              <td>AI Agent 模式</td>
+              <td class="check">✓</td>
+              <td class="cross">✗</td>
+              <td class="cross">✗</td>
+              <td class="cross">✗</td>
+            </tr>
+            <tr>
+              <td>AI 文生图</td>
+              <td class="check">✓</td>
+              <td class="cross">✗</td>
+              <td class="cross">✗</td>
+              <td class="partial">付费</td>
+            </tr>
+            <tr>
+              <td>AI 内容润色</td>
+              <td class="check">✓</td>
+              <td class="cross">✗</td>
+              <td class="cross">✗</td>
+              <td class="partial">付费</td>
+            </tr>
+            <tr>
+              <td>块引用</td>
+              <td class="check">✓</td>
+              <td class="check">✓</td>
+              <td class="check">✓</td>
+              <td class="check">✓</td>
+            </tr>
+            <tr>
+              <td>RSS 订阅</td>
+              <td class="check">✓</td>
+              <td class="cross">✗</td>
+              <td class="partial">插件</td>
+              <td class="cross">✗</td>
+            </tr>
+            <tr>
+              <td>网页剪藏</td>
+              <td class="check">✓</td>
+              <td class="cross">✗</td>
+              <td class="partial">插件</td>
+              <td class="check">✓</td>
+            </tr>
+            <tr>
+              <td>机器人推送通知</td>
+              <td class="check">✓</td>
+              <td class="cross">✗</td>
+              <td class="cross">✗</td>
+              <td class="cross">✗</td>
+            </tr>
+            <tr>
+              <td>关键字搜索</td>
+              <td class="check">✓</td>
+              <td class="cross">✗</td>
+              <td class="partial">插件</td>
+              <td class="cross">✗</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== About ===== -->
+  <section id="about" class="about-section">
+    <div class="container">
+      <h2 class="section-title fade-up">关于项目</h2>
+      <p class="section-subtitle fade-up">一个人的想法，大家的工具</p>
+      <div class="about-card fade-up">
+        <div class="about-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2680EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <h3>为什么做这个项目</h3>
+        <p>拓扑笔记是我的个人项目。因为觉得市面上的笔记软件总有些不完善的地方——要么过于臃肿，要么功能缺失，要么需要付费使用，要么数据不在自己手里——所以就自己动手做了一个。</p>
+        <p style="margin-top: 16px;">它完全免费、开源，希望也能帮到同样在寻找一款趁手笔记工具的你。如果在使用过程中遇到任何问题或有建议，欢迎随时通过邮件联系我，我会认真对待每一条反馈。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Contact ===== -->
+  <section id="contact" class="contact-section">
+    <div class="container">
+      <h2 class="section-title fade-up">联系反馈</h2>
+      <p class="section-subtitle fade-up">有问题、建议或者想聊聊？欢迎给我发邮件</p>
+      <div class="contact-card fade-up">
+        <div class="contact-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2680EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <h3>📮 邮件联系</h3>
+        <p>无论是 Bug 反馈、功能建议，还是使用心得，都欢迎来信</p>
+        <a href="mailto:294299195@qq.com" class="contact-email">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          294299195@qq.com
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CTA ===== -->
+  <section class="cta">
+    <div class="container fade-up">
+      <h2>开始构建你的知识网络</h2>
+      <p>免费、本地优先、AI 加持<br>输入 <code>[[</code> 连接想法，RSS 订阅汇聚知识，AI 润色让文字更出色</p>
+      <a href="#download" class="btn-primary">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        免费下载 v0.5.0
+      </a>
+    </div>
+  </section>
+
+  <!-- ===== Footer ===== -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-logo">
+          <svg viewBox="0 0 1024 1024" fill="none" width="28" height="28">
+            <g fill="#2680EB"><circle cx="512" cy="280" r="72"/><circle cx="310" cy="630" r="72"/><circle cx="714" cy="630" r="72"/>
+            <line x1="512" y1="280" x2="310" y2="630" stroke="#2680EB" stroke-width="36" stroke-linecap="round"/>
+            <line x1="512" y1="280" x2="714" y2="630" stroke="#2680EB" stroke-width="36" stroke-linecap="round"/>
+            <line x1="310" y1="630" x2="714" y2="630" stroke="#2680EB" stroke-width="36" stroke-linecap="round"/></g>
+          </svg>
+          拓扑笔记
+        </div>
+        <div class="footer-links">
+          <a href="#download">下载</a>
+          <a href="#features">功能</a>
+          <a href="#about">关于</a>
+          <a href="#contact">联系反馈</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>Write locally. Think connectedly.</p>
+        <p style="margin-top:8px;">© 2025 <span>拓扑笔记 (TpNote)</span></p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== Scripts ===== -->
+  <script>
+    // Nav scroll effect
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 10);
+    });
+
+    // Fade-up on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
