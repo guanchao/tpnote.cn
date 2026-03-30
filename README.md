@@ -262,7 +262,6 @@
 - [ ] 笔记收藏 / 置顶
 - [ ] 拖拽排序 + 文件夹折叠记忆
 - [ ] 命令面板（Quick Open / Command Palette）
-- [ ] 笔记属性（Frontmatter / Properties）
 - [x] AI 对话模式
 - [x] AI Agent 自动编辑模式
 - [x] AI 文生图
