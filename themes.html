@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>知识卡片主题库 — 拓扑笔记</title>
+  <meta name="description" content="拓扑笔记知识卡片主题库，30+ 精美内置主题，渐变、纯色、创意、少女风，一键生成精美分享图。">
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1024 1024'><rect x='40' y='40' width='944' height='944' rx='212' ry='212' fill='%23fff'/><g fill='%232680EB'><circle cx='512' cy='280' r='72'/><circle cx='310' cy='630' r='72'/><circle cx='714' cy='630' r='72'/><line x1='512' y1='280' x2='310' y2='630' stroke='%232680EB' stroke-width='36'/><line x1='512' y1='280' x2='714' y2='630' stroke='%232680EB' stroke-width='36'/><line x1='310' y1='630' x2='714' y2='630' stroke='%232680EB' stroke-width='36'/></g></svg>">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      color: #1a1a2e;
+      background: #f8fafc;
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* Navigation */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0, 0, 0, 0.06); }
+    .nav-inner { max-width: 1400px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .nav-logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.125rem; }
+    .nav-logo svg { width: 32px; height: 32px; }
+    .nav-links { display: flex; align-items: center; gap: 32px; }
+    .nav-links a { font-size: 0.9rem; color: #4b5563; transition: color 0.2s; font-weight: 500; }
+    .nav-links a:hover { color: #2680EB; }
+    .nav-links a.active { color: #2680EB; }
+
+    /* Header */
+    .page-header { padding: 120px 24px 60px; text-align: center; background: linear-gradient(180deg, #f0f7ff 0%, #f8fafc 100%); }
+    .page-header h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 16px; letter-spacing: -0.02em; }
+    .page-header h1 span { color: #ec4899; }
+    .page-header p { color: #6b7280; font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+
+    /* Filter Tabs */
+    .filter-section { padding: 24px; background: #fff; border-bottom: 1px solid #f0f0f3; position: sticky; top: 64px; z-index: 50; }
+    .filter-inner { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .filter-tab { padding: 8px 20px; border-radius: 100px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s; border: 1px solid #e5e7eb; background: #fff; color: #4b5563; }
+    .filter-tab:hover { border-color: #2680EB; color: #2680EB; }
+    .filter-tab.active { background: #2680EB; color: #fff; border-color: #2680EB; }
+    .filter-count { font-size: 0.75rem; opacity: 0.7; margin-left: 4px; }
+
+    /* Theme Grid */
+    .themes-container { max-width: 1400px; margin: 0 auto; padding: 40px 24px 80px; }
+    .category-section { margin-bottom: 60px; }
+    .category-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 2px solid #f0f0f3; display: flex; align-items: center; gap: 12px; }
+    .category-badge { font-size: 0.75rem; font-weight: 600; padding: 4px 12px; border-radius: 100px; }
+    .category-gradient .category-badge { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+    .category-solid .category-badge { background: rgba(107, 114, 128, 0.1); color: #6b7280; }
+    .category-creative .category-badge { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+    .category-girly .category-badge { background: rgba(236, 72, 153, 0.1); color: #ec4899; }
+
+    .themes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+
+    /* Theme Card */
+    .theme-card { background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.04); transition: all 0.3s; border: 1px solid #f0f0f3; }
+    .theme-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.1); }
+    .theme-preview { height: 180px; position: relative; overflow: hidden; }
+    .theme-preview-inner { position: absolute; inset: 16px; border-radius: 10px; display: flex; flex-direction: column; overflow: hidden; }
+    .theme-preview-header { padding: 12px 16px; font-weight: 700; font-size: 0.9rem; }
+    .theme-preview-content { padding: 0 16px 16px; flex: 1; font-size: 0.75rem; line-height: 1.6; opacity: 0.85; overflow: hidden; }
+    .theme-info { padding: 16px; border-top: 1px solid #f0f0f3; }
+    .theme-name { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+    .theme-meta { display: flex; align-items: center; gap: 8px; }
+    .theme-variant { font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; background: #f3f4f6; color: #6b7280; }
+    .theme-id { font-size: 0.7rem; color: #9ca3af; font-family: monospace; }
+
+    /* Footer */
+    footer { padding: 40px 24px; border-top: 1px solid #f0f0f3; background: #fff; text-align: center; }
+    .footer-logo { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 1rem; margin-bottom: 12px; }
+    .footer-logo svg { width: 24px; height: 24px; }
+    .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 16px; }
+    .footer-links a { font-size: 0.875rem; color: #6b7280; transition: color 0.2s; }
+    .footer-links a:hover { color: #2680EB; }
+    .footer-copy { font-size: 0.8rem; color: #9ca3af; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .page-header h1 { font-size: 1.75rem; }
+      .page-header p { font-size: 1rem; }
+      .filter-inner { justify-content: center; }
+      .themes-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+
+    /* Animations */
+    .fade-in { opacity: 0; transform: translateY(20px); animation: fadeIn 0.5s ease forwards; }
+    @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+    .theme-card:nth-child(1) { animation-delay: 0.05s; }
+    .theme-card:nth-child(2) { animation-delay: 0.1s; }
+    .theme-card:nth-child(3) { animation-delay: 0.15s; }
+    .theme-card:nth-child(4) { animation-delay: 0.2s; }
+    .theme-card:nth-child(5) { animation-delay: 0.25s; }
+    .theme-card:nth-child(6) { animation-delay: 0.3s; }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <svg viewBox="0 0 1024 1024" fill="none">
+          <g fill="#2680EB"><circle cx="512" cy="280" r="72"/><circle cx="310" cy="630" r="72"/><circle cx="714" cy="630" r="72"/>
+          <line x1="512" y1="280" x2="310" y2="630" stroke="#2680EB" stroke-width="36" stroke-linecap="round"/>
+          <line x1="512" y1="280" x2="714" y2="630" stroke="#2680EB" stroke-width="36" stroke-linecap="round"/>
+          <line x1="310" y1="630" x2="714" y2="630" stroke="#2680EB" stroke-width="36" stroke-linecap="round"/></g>
+        </svg>
+        拓扑笔记
+      </a>
+      <div class="nav-links">
+        <a href="index.html#features">功能</a>
+        <a href="index.html#highlights">亮点</a>
+        <a href="index.html#comparison">对比</a>
+        <a href="themes.html" class="active">主题库</a>
+        <a href="index.html#about">关于</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="page-header">
+    <h1>知识卡片<span>主题库</span></h1>
+    <p>30+ 精美内置主题，渐变、纯色、创意、少女风，让你的笔记在社交媒体上脱颖而出</p>
+  </header>
+
+  <!-- Filter -->
+  <section class="filter-section">
+    <div class="filter-inner">
+      <button class="filter-tab active" data-filter="all">全部<span class="filter-count">31</span></button>
+      <button class="filter-tab" data-filter="gradient">渐变<span class="filter-count">4</span></button>
+      <button class="filter-tab" data-filter="solid">纯色<span class="filter-count">2</span></button>
+      <button class="filter-tab" data-filter="creative">创意<span class="filter-count">11</span></button>
+      <button class="filter-tab" data-filter="girly">少女风<span class="filter-count">14</span></button>
+    </div>
+  </section>
+
+  <!-- Themes -->
+  <main class="themes-container">
+
+    <!-- Gradient Themes -->
+    <section class="category-section category-gradient" data-category="gradient">
+      <h2 class="category-title">
+        <span>🌈 渐变主题</span>
+        <span class="category-badge">4 款</span>
+      </h2>
+      <div class="themes-grid">
+        <!-- Purple Dream -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <div class="theme-preview-inner" style="background: rgba(255,255,255,0.92); color: #374151;">
+              <div class="theme-preview-header" style="color: #5b21b6;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">紫色梦境</div>
+            <div class="theme-meta">
+              <span class="theme-variant">circle</span>
+              <span class="theme-id">purple-dream</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ocean Blue -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+            <div class="theme-preview-inner" style="background: rgba(255,255,255,0.92); color: #374151;">
+              <div class="theme-preview-header" style="color: #0369a1;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">海洋蓝</div>
+            <div class="theme-meta">
+              <span class="theme-variant">square</span>
+              <span class="theme-id">ocean-blue</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sunset Glow -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #ffd86f 100%);">
+            <div class="theme-preview-inner" style="background: rgba(255,255,255,0.92); color: #374151;">
+              <div class="theme-preview-header" style="color: #be185d;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">夕阳暖橘</div>
+            <div class="theme-meta">
+              <span class="theme-variant">diamond</span>
+              <span class="theme-id">sunset-glow</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Forest Green -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+            <div class="theme-preview-inner" style="background: rgba(255,255,255,0.92); color: #374151;">
+              <div class="theme-preview-header" style="color: #065f46;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">森林绿</div>
+            <div class="theme-meta">
+              <span class="theme-variant">line</span>
+              <span class="theme-id">forest-green</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Solid Themes -->
+    <section class="category-section category-solid" data-category="solid">
+      <h2 class="category-title">
+        <span>◻️ 纯色主题</span>
+        <span class="category-badge">2 款</span>
+      </h2>
+      <div class="themes-grid">
+        <!-- Minimal White -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: #f8f9fa;">
+            <div class="theme-preview-inner" style="background: #ffffff; color: #374151; box-shadow: 0 4px 24px rgba(0,0,0,0.08);">
+              <div class="theme-preview-header" style="color: #111827;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">极简白</div>
+            <div class="theme-meta">
+              <span class="theme-variant">dot</span>
+              <span class="theme-id">minimal-white</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dark Elegant -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: #1a1a2e;">
+            <div class="theme-preview-inner" style="background: rgba(255,255,255,0.06); color: #cbd5e1;">
+              <div class="theme-preview-header" style="color: #e2e8f0;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">暗夜优雅</div>
+            <div class="theme-meta">
+              <span class="theme-variant">bracket</span>
+              <span class="theme-id">dark-elegant</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Creative Themes -->
+    <section class="category-section category-creative" data-category="creative">
+      <h2 class="category-title">
+        <span>🎨 创意主题</span>
+        <span class="category-badge">11 款</span>
+      </h2>
+      <div class="themes-grid">
+        <!-- Warm Paper -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: linear-gradient(135deg, #f5e6d3 0%, #f2d5bb 100%);">
+            <div class="theme-preview-inner" style="background: rgba(255,253,247,0.9); color: #44403c;">
+              <div class="theme-preview-header" style="color: #78350f;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">暖黄纸张</div>
+            <div class="theme-meta">
+              <span class="theme-variant">tag</span>
+              <span class="theme-id">warm-paper</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cherry Blossom -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);">
+            <div class="theme-preview-inner" style="background: rgba(255,255,255,0.92); color: #374151;">
+              <div class="theme-preview-header" style="color: #831843;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">樱花粉</div>
+            <div class="theme-meta">
+              <span class="theme-variant">pill</span>
+              <span class="theme-id">cherry-blossom</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tech Blue -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: linear-gradient(135deg, #0c1445 0%, #1a237e 50%, #283593 100%);">
+            <div class="theme-preview-inner" style="background: rgba(255,255,255,0.08); color: #cbd5e1;">
+              <div class="theme-preview-header" style="color: #93c5fd;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">科技蓝</div>
+            <div class="theme-meta">
+              <span class="theme-variant">bracket</span>
+              <span class="theme-id">tech-blue</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notebook Blue -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: linear-gradient(135deg, #8B9CF7 0%, #7B8FEF 50%, #95A5F5 100%);">
+            <div class="theme-preview-inner" style="background: #ffffff; color: #3d3d4e;">
+              <div class="theme-preview-header" style="color: #2d3142;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">活页笔记</div>
+            <div class="theme-meta">
+              <span class="theme-variant">notebook</span>
+              <span class="theme-id">notebook-blue</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vintage Parchment -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: linear-gradient(170deg, #F5ECD7 0%, #EDE0C8 40%, #E8D8B8 100%);">
+            <div class="theme-preview-inner" style="background: rgba(255,252,245,0.65); color: #4A3F30;">
+              <div class="theme-preview-header" style="color: #3B2F1E;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">复古羊皮纸</div>
+            <div class="theme-meta">
+              <span class="theme-variant">parchment</span>
+              <span class="theme-id">vintage-parchment</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dark Art Deco -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: linear-gradient(160deg, #1A1A2E 0%, #16213E 40%, #0F3460 100%);">
+            <div class="theme-preview-inner" style="background: rgba(255,255,255,0.04); color: #C8C0B0;">
+              <div class="theme-preview-header" style="color: #E8D5A3;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">暗夜华章</div>
+            <div class="theme-meta">
+              <span class="theme-variant">artdeco</span>
+              <span class="theme-id">dark-artdeco</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cyber Pulse -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: linear-gradient(170deg, #0A0A1A 0%, #0D1B2A 35%, #0A0F1E 70%, #050510 100%);">
+            <div class="theme-preview-inner" style="background: rgba(0,255,240,0.02); color: #A0B4C8;">
+              <div class="theme-preview-header" style="color: #00F0E0;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">数据脉冲</div>
+            <div class="theme-meta">
+              <span class="theme-variant">cyberpunk</span>
+              <span class="theme-id">cyber-pulse</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hand Journal -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: #F9F6F0;">
+            <div class="theme-preview-inner" style="background: rgba(255,255,255,0.85); color: #434A54;">
+              <div class="theme-preview-header" style="color: #2D3436;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">手帐物语</div>
+            <div class="theme-meta">
+              <span class="theme-variant">journal</span>
+              <span class="theme-id">hand-journal</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sticky Memo -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: #FFFFFF;">
+            <div class="theme-preview-inner" style="background: rgba(255,255,255,0.95); color: #3C3C43; box-shadow: 0 4px 24px rgba(0,0,0,0.06);">
+              <div class="theme-preview-header" style="color: #1A1A1A;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">便签清风</div>
+            <div class="theme-meta">
+              <span class="theme-variant">memo</span>
+              <span class="theme-id">sticky-memo</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Red Ink Magazine -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: #FFFFFF;">
+            <div class="theme-preview-inner" style="background: rgba(255,255,255,0.98); color: #2D2D2D; box-shadow: 0 4px 24px rgba(0,0,0,0.08);">
+              <div class="theme-preview-header" style="color: #1A1A1A; border-left: 4px solid #CF2E2E; padding-left: 12px;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">赤墨杂志</div>
+            <div class="theme-meta">
+              <span class="theme-variant">redmagazine</span>
+              <span class="theme-id">red-ink-magazine</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Terracotta Warm -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: #FBF7F2;">
+            <div class="theme-preview-inner" style="background: rgba(255,254,251,0.95); color: #3D3530; box-shadow: 0 4px 24px rgba(0,0,0,0.06);">
+              <div class="theme-preview-header" style="color: #2C2420;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">赤陶暖风</div>
+            <div class="theme-meta">
+              <span class="theme-variant">terracotta</span>
+              <span class="theme-id">terracotta-warm</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Girly Themes -->
+    <section class="category-section category-girly" data-category="girly">
+      <h2 class="category-title">
+        <span>💕 少女风主题</span>
+        <span class="category-badge">14 款</span>
+      </h2>
+      <div class="themes-grid">
+        <!-- Peach Fuzz -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: linear-gradient(135deg, #FFBE98 0%, #FF6B6B 50%, #EE5A6F 100%);">
+            <div class="theme-preview-inner" style="background: rgba(255,255,255,0.93); color: #4a3728;">
+              <div class="theme-preview-header" style="color: #9f1239;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">蜜桃绒</div>
+            <div class="theme-meta">
+              <span class="theme-variant">circle</span>
+              <span class="theme-id">peach-fuzz</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lavender Mist -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: linear-gradient(135deg, #E8D5F5 0%, #C3AED6 50%, #9E8DC0 100%);">
+            <div class="theme-preview-inner" style="background: rgba(255,255,255,0.93); color: #3d3552;">
+              <div class="theme-preview-header" style="color: #5b2c8e;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">薰衣草雾</div>
+            <div class="theme-meta">
+              <span class="theme-variant">diamond</span>
+              <span class="theme-id">lavender-mist</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Milk Tea -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: linear-gradient(135deg, #E8C9A0 0%, #D4A574 50%, #C4956A 100%);">
+            <div class="theme-preview-inner" style="background: rgba(255,252,247,0.94); color: #4a3728;">
+              <div class="theme-preview-header" style="color: #6b3a1f;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">奶茶棕</div>
+            <div class="theme-meta">
+              <span class="theme-variant">tag</span>
+              <span class="theme-id">milk-tea</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rose Quartz -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: linear-gradient(135deg, #F4C2C2 0%, #E8A0BF 50%, #D4789C 100%);">
+            <div class="theme-preview-inner" style="background: rgba(255,255,255,0.93); color: #4a2c3d;">
+              <div class="theme-preview-header" style="color: #881337;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">玫瑰石英</div>
+            <div class="theme-meta">
+              <span class="theme-variant">pill</span>
+              <span class="theme-id">rose-quartz</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mint Breeze -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: linear-gradient(135deg, #A8E6CF 0%, #7EC8B5 50%, #55B4A2 100%);">
+            <div class="theme-preview-inner" style="background: rgba(255,255,255,0.93); color: #1e3a34;">
+              <div class="theme-preview-header" style="color: #065f46;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">薄荷微风</div>
+            <div class="theme-meta">
+              <span class="theme-variant">line</span>
+              <span class="theme-id">mint-breeze</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cotton Candy -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: linear-gradient(135deg, #FFB6C1 0%, #E0BBE4 33%, #B5DEFF 66%, #DCEEFB 100%);">
+            <div class="theme-preview-inner" style="background: rgba(255,255,255,0.93); color: #3d3552;">
+              <div class="theme-preview-header" style="color: #7c2d72;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">棉花糖</div>
+            <div class="theme-meta">
+              <span class="theme-variant">square</span>
+              <span class="theme-id">cotton-candy</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Aurora Dream -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: linear-gradient(135deg, #A18CD1 0%, #FBC2EB 40%, #F6D5A8 70%, #F9E9D0 100%);">
+            <div class="theme-preview-inner" style="background: rgba(255,255,255,0.92); color: #3b2e50;">
+              <div class="theme-preview-header" style="color: #6b21a8;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">极光幻境</div>
+            <div class="theme-meta">
+              <span class="theme-variant">diamond</span>
+              <span class="theme-id">aurora-dream</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cream Apricot -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: linear-gradient(135deg, #FFF1E6 0%, #F5D5C8 50%, #F0B8A8 100%);">
+            <div class="theme-preview-inner" style="background: rgba(255,255,255,0.9); color: #44312a;">
+              <div class="theme-preview-header" style="color: #7c2d12;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">杏仁奶油</div>
+            <div class="theme-meta">
+              <span class="theme-variant">dot</span>
+              <span class="theme-id">cream-apricot</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Baby Blue -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: linear-gradient(135deg, #DCEEFB 0%, #B5D8F7 50%, #89C4F4 100%);">
+            <div class="theme-preview-inner" style="background: rgba(255,255,255,0.93); color: #2d3a4a;">
+              <div class="theme-preview-header" style="color: #1e3a5f;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">宝宝蓝</div>
+            <div class="theme-meta">
+              <span class="theme-variant">circle</span>
+              <span class="theme-id">baby-blue</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Matcha Latte -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: linear-gradient(135deg, #D4E7C5 0%, #B6D7A8 50%, #9ABF8A 100%);">
+            <div class="theme-preview-inner" style="background: rgba(255,255,252,0.93); color: #33401e;">
+              <div class="theme-preview-header" style="color: #2d5016;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">抹茶拿铁</div>
+            <div class="theme-meta">
+              <span class="theme-variant">tag</span>
+              <span class="theme-id">matcha-latte</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Starry Lilac -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: linear-gradient(135deg, #2D1B69 0%, #5B3A8C 40%, #8E6DB5 70%, #C4A6D7 100%);">
+            <div class="theme-preview-inner" style="background: rgba(255,255,255,0.1); color: #d8c6ee;">
+              <div class="theme-preview-header" style="color: #e9d5ff;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">星空丁香</div>
+            <div class="theme-meta">
+              <span class="theme-variant">bracket</span>
+              <span class="theme-id">starry-lilac</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Strawberry Yogurt -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: linear-gradient(135deg, #FFE6EA 0%, #FFB3C6 50%, #FF8FAB 100%);">
+            <div class="theme-preview-inner" style="background: rgba(255,255,255,0.93); color: #4a2030;">
+              <div class="theme-preview-header" style="color: #9f1239;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">草莓酸奶</div>
+            <div class="theme-meta">
+              <span class="theme-variant">pill</span>
+              <span class="theme-id">strawberry-yogurt</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Neon Sweet Pink -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: linear-gradient(135deg, #667eea 0%, #E44D8A 25%, #F7797D 50%, #F5A623 75%, #764ba2 100%);">
+            <div class="theme-preview-inner" style="background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,235,238,0.92) 60%, rgba(252,220,228,0.88) 100%); color: #2D2B3A;">
+              <div class="theme-preview-header" style="color: #1A1A2E;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">霓虹甜粉</div>
+            <div class="theme-meta">
+              <span class="theme-variant">neonpink</span>
+              <span class="theme-id">neon-sweet-pink</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Candy Journal -->
+        <div class="theme-card fade-in">
+          <div class="theme-preview" style="background: #F5F0FA;">
+            <div class="theme-preview-inner" style="background: rgba(255,255,255,0.92); color: #3A3548;">
+              <div class="theme-preview-header" style="color: #2D2B3A;">📚 学习笔记</div>
+              <div class="theme-preview-content">知识不是孤岛，而是相互连接的网络。通过双向链接，让每一个想法都能找到归属。</div>
+            </div>
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">糖果手帐</div>
+            <div class="theme-meta">
+              <span class="theme-variant">candyjournal</span>
+              <span class="theme-id">candy-journal</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-logo">
+      <svg viewBox="0 0 1024 1024" fill="none" width="24" height="24">
+        <g fill="#2680EB"><circle cx="512" cy="280" r="72"/><circle cx="310" cy="630" r="72"/><circle cx="714" cy="630" r="72"/>
+        <line x1="512" y1="280" x2="310" y2="630" stroke="#2680EB" stroke-width="36" stroke-linecap="round"/>
+        <line x1="512" y1="280" x2="714" y2="630" stroke="#2680EB" stroke-width="36" stroke-linecap="round"/>
+        <line x1="310" y1="630" x2="714" y2="630" stroke="#2680EB" stroke-width="36" stroke-linecap="round"/></g>
+      </svg>
+      拓扑笔记
+    </div>
+    <div class="footer-links">
+      <a href="index.html">首页</a>
+      <a href="index.html#features">功能</a>
+      <a href="index.html#about">关于</a>
+      <a href="index.html#contact">联系反馈</a>
+    </div>
+    <p class="footer-copy">© 2025 拓扑笔记 (TpNote) — Write locally. Think connectedly.</p>
+  </footer>
+
+  <script>
+    // Filter functionality
+    const filterTabs = document.querySelectorAll('.filter-tab');
+    const categorySections = document.querySelectorAll('.category-section');
+
+    filterTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Update active state
+        filterTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        const filter = tab.dataset.filter;
+
+        // Show/hide sections
+        categorySections.forEach(section => {
+          if (filter === 'all' || section.dataset.category === filter) {
+            section.style.display = 'block';
+          } else {
+            section.style.display = 'none';
+          }
+        });
+
+        // Re-trigger animations
+        document.querySelectorAll('.theme-card').forEach(card => {
+          card.style.animation = 'none';
+          card.offsetHeight; // Trigger reflow
+          card.style.animation = null;
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
